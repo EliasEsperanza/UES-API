@@ -1,5 +1,5 @@
 import app from './app.js';
-
+import { sequelize } from "./database/database.js";
 import dotenv from "dotenv";
 
 if (process.env.NODE_ENV !== "production") {
