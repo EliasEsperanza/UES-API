@@ -37,4 +37,4 @@ export const Referencias = sequelize.define('referencias', {
     tableName: 'referencias'
 });
 
-Referencias.belongsTo(Zonas, { foreignKey: 'zona' });
+Referencias.belongsTo(Zonas, { foreignKey: 'zona', as: 'zonaReferencia' });
