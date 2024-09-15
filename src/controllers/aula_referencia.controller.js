@@ -13,7 +13,7 @@ export const getAulasReferencias= async(req,res)=>{
     }
 };
 
-export const getAulasReferenciasById= async(req,res)=>{
+export const getAulaReferenciaById= async(req,res)=>{
     const { id } = req.params;
     try {
         const aulaReferencia = await AulaReferencia.findOne({
@@ -31,7 +31,7 @@ export const getAulasReferenciasById= async(req,res)=>{
     }
 };
 
-export const createAulasReferencias= async(req,res)=>{
+export const createAulaReferencia= async(req,res)=>{
     const { referencia_id } = req.body;
     try {
         const newAulaReferencia = await AulaReferencia.create({
@@ -54,7 +54,7 @@ export const createAulasReferencias= async(req,res)=>{
 
 
 
-export const updateAulaseferenciasById= async(req,res)=>{
+export const updateAulaReferenciaById= async(req,res)=>{
     const { id } = req.params;
     const { referencia_id } = req.body;
     try {
@@ -88,7 +88,7 @@ export const updateAulaseferenciasById= async(req,res)=>{
 
 
 
-export const deleteAulasReferenciasById= async(req,res)=>{
+export const deleteAulaReferenciaById= async(req,res)=>{
     const { id } = req.params;
     try {
         const deletedRows = await AulaReferencia.destroy({
