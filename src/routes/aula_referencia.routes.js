@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getAulasReferencias,getAulaReferenciaById,createAulaReferencia,updateAulaReferenciaById,deleteAulaReferenciaById} from '../controllers/aula_referencia.controller';
+import {getAulasReferencias,getAulaReferenciaById,createAulaReferencia,updateAulaReferenciaById,deleteAulaReferenciaById} from '../controllers/aula_referencia.controller.js';
 
 const router= new Router();
 

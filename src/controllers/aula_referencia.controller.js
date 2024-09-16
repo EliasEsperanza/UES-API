@@ -1,4 +1,4 @@
-import { AulaReferencia } from "../models/Aula_Referencia";
+import { AulaReferencia } from "../models/Aula_Referencia.js";
 
 export const getAulasReferencias= async(req,res)=>{
     try {
