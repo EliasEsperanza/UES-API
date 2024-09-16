@@ -1,13 +1,13 @@
 import { Router } from "express";
 import {getAulasReferencias,getAulaReferenciaById,createAulaReferencia,updateAulaReferenciaById,deleteAulaReferenciaById} from '../controllers/aula_referencia.controller';
 
-const routerAulaReferencia= new Router();
+const router= new Router();
 
-routerAulaReferencia.get('/aula_referencias',getAulasReferencias);
-routerAulaReferencia.get('/aula_referencias/:id',getAulaReferenciaById);
-routerAulaReferencia.post('/aula_referencias',createAulaReferencia);
-routerAulaReferencia.put('/aula_referencias/:id',updateAulaReferenciaById);
-routerAulaReferencia.delete('/aula_referencias/:id',deleteAulaReferenciaById);
+router.get('/aula_referencias',getAulasReferencias);
+router.get('/aula_referencias/:id',getAulaReferenciaById);
+router.post('/aula_referencias',createAulaReferencia);
+router.put('/aula_referencias/:id',updateAulaReferenciaById);
+router.delete('/aula_referencias/:id',deleteAulaReferenciaById);
 
-export default routerAulaReferencia;
+export default router;
 
