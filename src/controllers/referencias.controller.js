@@ -1,8 +1,20 @@
+import redisClient from '../database/redis.js';
 import { Referencias } from '../models/Referencias.js';
 
 export const getReferencias = async (req, res) => {
     try {
+        const cachedReferencias = await redisClient.get('referencias');
+
+        if (cachedReferencias) {
+            return res.json({
+                data: JSON.parse(cachedReferencias)
+            });
+        }
+
         const referencias = await Referencias.findAll();
+        
+        await redisClient.setEx('referencias', 1800, JSON.stringify(referencias));
+
         res.json({
             data: referencias
         });
@@ -12,6 +24,7 @@ export const getReferencias = async (req, res) => {
         });
     }
 };
+
 
 export const createReferencia = async (req, res) => {
     const { nombre, descripcion, foto, zona, coordenadas } = req.body;
@@ -40,21 +53,42 @@ export const createReferencia = async (req, res) => {
 
 export const getReferenciaById = async (req, res) => {
     const { id } = req.params;
+    
     try {
+        const cachedReferencia = await redisClient.get(`referencia:${id}`);
+        
+        if (cachedReferencia) {
+            return res.json({
+                data: JSON.parse(cachedReferencia)
+            });
+        }
+
         const referencia = await Referencias.findOne({
             where: {
                 id
             }
         });
-        res.json({
-            data: referencia
-        });
+
+        if (referencia) {
+            await redisClient.setEx(`referencia:${id}`, 1800, JSON.stringify(referencia));
+            
+            return res.json({
+                data: referencia
+            });
+        } else {
+            return res.status(404).json({
+                message: "Referencia no encontrada"
+            });
+        }
+
     } catch (error) {
-        res.status(500).json({
+        console.error(error);
+        return res.status(500).json({
             message: "Error interno del servidor"
         });
     }
-}
+};
+
 
 export const updateReferenciaById = async (req, res) => {
     const { id } = req.params;
