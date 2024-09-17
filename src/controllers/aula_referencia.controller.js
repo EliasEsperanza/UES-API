@@ -1,11 +1,23 @@
+import redisClient from "../database/redis.js";
 import { AulaReferencia } from "../models/Aula_Referencia.js";
 
 export const getAulasReferencias= async(req,res)=>{
     try {
+        const cachedReferencias = await redisClient.get('aula_referencia');
+        if (cachedReferencias) {
+           return res.json({
+                data: JSON.parse(cachedReferencias)
+            });
+            
+        }
         const aulasReferencia = await AulaReferencia.findAll();
+
+        await redisClient.setEx('aula_referencia', 1800, JSON.stringify(aulasReferencia));
+
         res.json({
             data: aulasReferencia
         });
+
     } catch (error) {
         res.status(500).json({
             message: "Error interno del servidor"
@@ -16,14 +28,33 @@ export const getAulasReferencias= async(req,res)=>{
 export const getAulaReferenciaById= async(req,res)=>{
     const { id } = req.params;
     try {
+        const cachedReferencia = await redisClient.get(`aula_referencia:${id}`);
+        
+        if (cachedReferencia) {
+            return res.json({
+                data: JSON.parse(cachedReferencia)
+            });
+        }
+
         const aulaReferencia = await AulaReferencia.findOne({
             where: {
                 id
             }
         });
-        res.json({
-            data: aulaReferencia
-        });
+
+        if (aulaReferencia) {
+            await redisClient.setEx(`aula_referencia:${id}`, 1800, JSON.stringify(aulaReferencia));
+            
+            return res.json({
+                data: aulaReferencia
+            });
+        } else {
+            return res.status(404).json({
+                message: "Referencia de aula no encontrada"
+            });
+        }
+
+       
     } catch (error) {
         res.status(500).json({
             message: "Error interno del servidor"
