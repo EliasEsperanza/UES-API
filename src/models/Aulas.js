@@ -29,4 +29,4 @@ export const Aulas = sequelize.define('aulas', {
     tableName: 'aulas'
 });
 
-Aulas.belongsTo(Zonas, { foreignKey: 'zona' });
+Aulas.belongsTo(Zonas, { foreignKey: 'zona', as: 'zonaRelacionada' });

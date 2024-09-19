@@ -7,6 +7,7 @@ export const getAulas = async (req, res) => {
         const aulas = await Aulas.findAll({
             include: {
                 model: Zonas,
+                as: 'zonaRelacionada',
                 attributes: ['nombre']
             }
         });
@@ -67,6 +68,7 @@ export const getAulaById = async (req, res) => {
             where: { id },
             include: {
                 model: Zonas,
+                as: 'zonaRelacionada', 
                 attributes: ['nombre']
             }
         });

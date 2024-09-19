@@ -1,35 +1,55 @@
 import redisClient from "../database/redis.js";
 import { AulaReferencia } from "../models/Aula_Referencia.js";
 
-export const getAulasReferencias= async(req,res)=>{
+export const getAulasReferencias = async (req, res) => {
     try {
         const cachedReferencias = await redisClient.get('aula_referencia');
         if (cachedReferencias) {
-           return res.json({
+            console.log("Datos obtenidos de Redis Cache");
+            return res.json({
                 data: JSON.parse(cachedReferencias)
             });
-            
         }
-        const aulasReferencia = await AulaReferencia.findAll();
+
+        const aulasReferencia = await AulaReferencia.findAll({
+            include: [
+                {
+                    model: Aulas,
+                    attributes: ['id', 'numero']
+                },
+                {
+                    model: Referencias,
+                    attributes: ['id', 'nombre']
+                }
+            ]
+        });
+
+        console.log("Resultado de aulasReferencia:", aulasReferencia);
+
+        if (aulasReferencia.length === 0) {
+            return res.status(404).json({
+                message: "No se encontraron referencias de aulas"
+            });
+        }
 
         await redisClient.setEx('aula_referencia', 1800, JSON.stringify(aulasReferencia));
 
         res.json({
             data: aulasReferencia
         });
-
     } catch (error) {
         res.status(500).json({
-            message: "Error interno del servidor"
+            message: "Error interno del servidor",
+            error: error.message
         });
     }
 };
 
-export const getAulaReferenciaById= async(req,res)=>{
-    const { id } = req.params;
+
+export const getAulaReferenciaById = async (req, res) => {
+    const { aula_id, referencia_id } = req.params; 
     try {
-        const cachedReferencia = await redisClient.get(`aula_referencia:${id}`);
-        
+        const cachedReferencia = await redisClient.get(`aula_referencia:${aula_id}:${referencia_id}`);
         if (cachedReferencia) {
             return res.json({
                 data: JSON.parse(cachedReferencia)
@@ -38,12 +58,13 @@ export const getAulaReferenciaById= async(req,res)=>{
 
         const aulaReferencia = await AulaReferencia.findOne({
             where: {
-                id
+                aula_id,
+                referencia_id
             }
         });
 
         if (aulaReferencia) {
-            await redisClient.setEx(`aula_referencia:${id}`, 1800, JSON.stringify(aulaReferencia));
+            await redisClient.setEx(`aula_referencia:${aula_id}:${referencia_id}`, 1800, JSON.stringify(aulaReferencia));
             
             return res.json({
                 data: aulaReferencia
@@ -53,11 +74,10 @@ export const getAulaReferenciaById= async(req,res)=>{
                 message: "Referencia de aula no encontrada"
             });
         }
-
-       
     } catch (error) {
         res.status(500).json({
-            message: "Error interno del servidor"
+            message: "Error interno del servidor",
+            error: error.message
         });
     }
 };
