@@ -1,6 +1,5 @@
 import { Aulas } from '../models/Aulas.js';
 import { Zonas } from '../models/Zonas.js';
-import { Sequelize } from 'sequelize';
 
 // get aulas with their associated area
 export const getAulas = async (req, res) => {

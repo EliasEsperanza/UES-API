@@ -18,6 +18,8 @@ Esta es la API oficial para el proyecto de mapeo de la Universidad de El Salvado
 - **Node.js**
 - **Express.js**
 - **PostgreSQL**
+- **Redis**
+- **Docker**
 
 ### **Estructura del Proyecto**
 
@@ -39,7 +41,7 @@ Esta es la API oficial para el proyecto de mapeo de la Universidad de El Salvado
 <p align="left">
 Desarrollado por el equipo de backend para el proyecto de mapeo de la Universidad de El Salvador.<br/>
 - **Líder del equipo**: Elias Esperanza<br/>
-- **Colaboradores**:<br/>
+- **Equipo**:<br/>
   - Luis Cruz<br/>
   - Gabriel De la O<br/>
   - Marlon Aleman<br/>
