@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getZonaById, getZonas, createZona, deleteZonaById, updateZonaById } from "../controllers/Zonas.controller";
+import { getZonaById, getZonas, createZona, deleteZonaById, updateZonaById } from "../controllers/Zonas.controller.js";
 
 const router = Router();
 

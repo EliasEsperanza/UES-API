@@ -1,5 +1,5 @@
 import redisClient from "../database/redis";
-import { Zonas } from "../models/Zonas";
+import { Zonas } from "../models/Zonas.js";
 
 export const getZonas = async (req, res)=>{
     try {
