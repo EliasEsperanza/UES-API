@@ -1,4 +1,4 @@
-import redisClient from "../database/redis";
+import redisClient from "../database/redis.js";
 import { Zonas } from "../models/Zonas.js";
 
 export const getZonas = async (req, res)=>{
@@ -43,31 +43,28 @@ export const createZona = async (req, res)=>{
         });
     }
 }
-export const getZonaById = async (req,res) =>{
-    const id = req.params;
+export const getZonaById = async (req, res) => {
+    const { id } = req.params;
     try {
-        const cachedZonas = await redisClient.get(`zonas:${id}`);
-        if(cachedZonas)
-        {
+        const cachedZona = await redisClient.get(`zonas:${id}`);
+        if (cachedZona) {
             return res.json({
-                data:JSON.parse(cachedZonas)
+                data: JSON.parse(cachedZona)
             });
         }
+        
         const zona = await Zonas.findOne({
-            where:{
-                id
-            }
+            where: { id }
         });
-        if(zona){
-            await redisClient.setEx(`zonas:${id}`,1800, JSON.stringify(zona));
+        
+        if (zona) {
+            await redisClient.setEx(`zonas:${id}`, 1800, JSON.stringify(zona));
             return res.json({
-                data:zona
+                data: zona
             });
-        }
-        else
-        {
+        } else {
             return res.status(404).json({
-                message:"Zona no encontrada"
+                message: "Zona no encontrada"
             });
         }
     } catch (error) {
@@ -75,7 +72,7 @@ export const getZonaById = async (req,res) =>{
             message: "ERROR INTERNO DEL SERVIDOR"
         });
     }
-}
+};
 export const updateZonaById = async(req, res)=>{
     const {id} = req.params;
     const{nombre, coordenadas} = req.body;

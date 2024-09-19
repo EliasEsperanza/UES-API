@@ -1,9 +1,18 @@
+import redisClient from '../database/redis.js';
 import { Aulas } from '../models/Aulas.js';
 import { Zonas } from '../models/Zonas.js';
 
-// get aulas with their associated area
+// Obtener todas las aulas (con caché en Redis)
 export const getAulas = async (req, res) => {
     try {
+        const cachedAulas = await redisClient.get('aulas');
+
+        if (cachedAulas) {
+            return res.json({
+                data: JSON.parse(cachedAulas)
+            });
+        }
+
         const aulas = await Aulas.findAll({
             include: {
                 model: Zonas,
@@ -11,105 +20,103 @@ export const getAulas = async (req, res) => {
                 attributes: ['nombre']
             }
         });
+        
+        await redisClient.setEx('aulas', 1800, JSON.stringify(aulas));
 
-        if (aulas.length > 0) {
-            res.status(200).json({
-                message: "Aulas obtenidas con éxito",
-                data: aulas
-            });
-        } else {
-            res.status(404).json({
-                message: "No se encontraron aulas"
-            });
-        }
+        res.json({
+            data: aulas
+        });
     } catch (error) {
         res.status(500).json({
-            message: "Error interno del servidor",
-            error: error.message
+            message: "Error interno del servidor"
         });
     }
 };
 
-// create a new aula
 export const createAula = async (req, res) => {
-    const { nombre, capacidad, zonaId } = req.body;
+    const { numero, zona, capacidad } = req.body;
     try {
         const newAula = await Aulas.create({
-            nombre,
-            capacidad,
-            zonaId
+            numero,
+            zona,
+            capacidad
         }, {
-            fields: ['nombre', 'capacidad', 'zonaId']
+            fields: ['numero', 'zona', 'capacidad']
         });
 
         if (newAula) {
-            res.status(201).json({
+            res.json({
                 message: "Aula creada exitosamente",
                 data: newAula
-            });
-        } else {
-            res.status(400).json({
-                message: "No se pudo crear el aula"
             });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error interno del servidor",
-            error: error.message
+            message: "Error interno del servidor"
         });
     }
 };
 
-//get aula by id
 export const getAulaById = async (req, res) => {
     const { id } = req.params;
+    
     try {
+        const cachedAula = await redisClient.get(`aula:${id}`);
+        
+        if (cachedAula) {
+            return res.json({
+                data: JSON.parse(cachedAula)
+            });
+        }
+
         const aula = await Aulas.findOne({
             where: { id },
             include: {
                 model: Zonas,
-                as: 'zonaRelacionada', 
+                as: 'zonaRelacionada',
                 attributes: ['nombre']
             }
         });
 
         if (aula) {
-            res.status(200).json({
-                message: "Aula obtenida con éxito",
+            await redisClient.setEx(`aula:${id}`, 1800, JSON.stringify(aula));
+            
+            return res.json({
                 data: aula
             });
         } else {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "Aula no encontrada"
             });
         }
+
     } catch (error) {
-        res.status(500).json({
-            message: "Error interno del servidor",
-            error: error.message
+        return res.status(500).json({
+            message: "Error interno del servidor"
         });
     }
 };
 
-// update aula by Id
 export const updateAulaById = async (req, res) => {
     const { id } = req.params;
-    const { nombre, capacidad, zonaId } = req.body;
-    try {D
-        const aula = await Aulas.findOne({
+    const { numero, zona, capacidad } = req.body;
+    try {
+        const aulas = await Aulas.findAll({
+            attributes: ['id', 'numero', 'zona', 'capacidad'],
             where: { id }
         });
 
-        if (aula) {
-            await aula.update({
-                nombre,
-                capacidad,
-                zonaId
+        if (aulas.length > 0) {
+            aulas.forEach(async aula => {
+                await aula.update({
+                    numero,
+                    zona,
+                    capacidad
+                });
             });
-
-            res.status(200).json({
+            res.json({
                 message: "Aula actualizada exitosamente",
-                data: aula
+                data: aulas
             });
         } else {
             res.status(404).json({
@@ -118,33 +125,23 @@ export const updateAulaById = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({
-            message: "Error interno del servidor",
-            error: error.message
+            message: "Error interno del servidor"
         });
     }
 };
 
-// delete aula by id
 export const deleteAulaById = async (req, res) => {
     const { id } = req.params;
     try {
         const deletedRows = await Aulas.destroy({
             where: { id }
         });
-
-        if (deletedRows === 1) {
-            res.status(200).json({
-                message: "Aula eliminada exitosamente"
-            });
-        } else {
-            res.status(404).json({
-                message: "Aula no encontrada"
-            });
-        }
+        res.json({
+            message: deletedRows === 1 ? "Aula eliminada exitosamente" : "Aula no encontrada"
+        });
     } catch (error) {
         res.status(500).json({
-            message: "Error interno del servidor",
-            error: error.message
+            message: "Error interno del servidor"
         });
     }
 };
