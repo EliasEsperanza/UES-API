@@ -27,8 +27,9 @@ export const getAulasReferencias= async(req,res)=>{
 
 export const getAulaReferenciaById= async(req,res)=>{
     const { id } = req.params;
+    const {referencia_id}=req.params;
     try {
-        const cachedReferencia = await redisClient.get(`aula_referencia:${id}`);
+        const cachedReferencia = await redisClient.get(`aula_referencia:${id}:${referencia_id}`);
         
         if (cachedReferencia) {
             return res.json({
@@ -38,12 +39,13 @@ export const getAulaReferenciaById= async(req,res)=>{
 
         const aulaReferencia = await AulaReferencia.findOne({
             where: {
-                id
+                id,
+                referencia_id
             }
         });
 
         if (aulaReferencia) {
-            await redisClient.setEx(`aula_referencia:${id}`, 1800, JSON.stringify(aulaReferencia));
+            await redisClient.setEx(`aula_referencia:${id}:${referencia_id}`, 1800, JSON.stringify(aulaReferencia));
             
             return res.json({
                 data: aulaReferencia
