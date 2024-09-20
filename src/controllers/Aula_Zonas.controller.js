@@ -29,11 +29,10 @@ export const get_Aulas_Zonas= async(req,res)=>{
 
 
 export const get_Aula_Zonas_ById = async (req, res) => {
-    const { id } = req.params;
+    const { aula_id, zona_id } = req.params;
 
     try {
-        // Buscammos en la caché
-        const cachedReferencia = await redisClient.get(`aula_zona:${id}`);
+        const cachedReferencia = await redisClient.get(`aula_zona:${aula_id}:${zona_id}`);
         
         if (cachedReferencia) {
             return res.json({
@@ -41,15 +40,15 @@ export const get_Aula_Zonas_ById = async (req, res) => {
             });
         }
 
-        // Buscammos  en la base de datos
         const aulaZona = await AulaZona.findOne({
             where: {
-                id 
+                aula_id,
+                zona_id 
             }
         });
 
         if (aulaZona) {
-            await redisClient.setEx(`aula_zona:${id}`, 1800, JSON.stringify(aulaZona));
+            await redisClient.setEx(`aula_zona:${aula_id}:${zona_id}`, 1800, JSON.stringify(aulaZona));
             
             return res.json({
                 data: aulaZona
