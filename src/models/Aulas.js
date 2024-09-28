@@ -22,6 +22,10 @@ export const Aulas = sequelize.define('aulas', {
     capacidad: {
         type: DataTypes.INTEGER,
         allowNull: true
+    },
+    fotos:{
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     timestamps: false,

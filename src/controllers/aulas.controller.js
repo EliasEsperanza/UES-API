@@ -34,14 +34,15 @@ export const getAulas = async (req, res) => {
 };
 
 export const createAula = async (req, res) => {
-    const { numero, zona, capacidad } = req.body;
+    const { numero, zona, capacidad, fotos } = req.body;
     try {
         const newAula = await Aulas.create({
             numero,
             zona,
-            capacidad
+            capacidad,
+            fotos
         }, {
-            fields: ['numero', 'zona', 'capacidad']
+            fields: ['numero', 'zona', 'capacidad', 'fotos']
         });
 
         if (newAula) {
@@ -99,10 +100,10 @@ export const getAulaById = async (req, res) => {
 
 export const updateAulaById = async (req, res) => {
     const { id } = req.params;
-    const { numero, zona, capacidad } = req.body;
+    const { numero, zona, capacidad, fotos } = req.body;
     try {
         const aulas = await Aulas.findAll({
-            attributes: ['id', 'numero', 'zona', 'capacidad'],
+            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos'],
             where: { id }
         });
 
@@ -111,7 +112,8 @@ export const updateAulaById = async (req, res) => {
                 await aula.update({
                     numero,
                     zona,
-                    capacidad
+                    capacidad,
+                    fotos
                 });
             });
             res.json({
