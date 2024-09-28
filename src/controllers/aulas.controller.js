@@ -14,6 +14,7 @@ export const getAulas = async (req, res) => {
         }
 
         const aulas = await Aulas.findAll({
+            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos'],
             include: {
                 model: Zonas,
                 as: 'zonaRelacionada',
@@ -32,6 +33,7 @@ export const getAulas = async (req, res) => {
         });
     }
 };
+
 
 export const createAula = async (req, res) => {
     const { numero, zona, capacidad, fotos } = req.body;
