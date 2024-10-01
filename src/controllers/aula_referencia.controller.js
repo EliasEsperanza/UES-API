@@ -62,6 +62,43 @@ export const getAulaReferenciaById = async (req, res) => {
     }
 };
 
+export const getReferenciasByAulaId = async (req, res) => {
+    const { aula_id } = req.params;
+    
+    try {
+        const cachedReferencias = await redisClient.get(`aula_referencias:${aula_id}`);
+        
+        if (cachedReferencias) {
+            return res.json({
+                data: JSON.parse(cachedReferencias)
+            });
+        }
+
+        const referencias = await AulaReferencia.findAll({
+            where: {
+                aula_id
+            }
+        });
+
+        if (referencias.length > 0) {
+            await redisClient.setEx(`aula_referencias:${aula_id}`, 1800, JSON.stringify(referencias));
+            return res.json({
+                data: referencias
+            });
+        } else {
+            return res.status(404).json({
+                message: "No se encontraron referencias para este aula"
+            });
+        }
+        
+    } catch (error) {
+        res.status(500).json({
+            message: "Error interno del servidor"
+        });
+    }
+};
+
+
 export const createAulaReferencia = async (req, res) => {
     const { referencia_id } = req.body;
     try {
