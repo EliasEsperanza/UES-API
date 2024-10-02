@@ -14,7 +14,7 @@ export const getAulas = async (req, res) => {
         }
 
         const aulas = await Aulas.findAll({
-            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos'],
+            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos','indicaciones'],
             include: {
                 model: Zonas,
                 as: 'zonaRelacionada',
@@ -36,15 +36,16 @@ export const getAulas = async (req, res) => {
 
 
 export const createAula = async (req, res) => {
-    const { numero, zona, capacidad, fotos } = req.body;
+    const { numero, zona, capacidad, fotos,indicaciones } = req.body;
     try {
         const newAula = await Aulas.create({
             numero,
             zona,
             capacidad,
-            fotos
+            fotos,
+            indicaciones
         }, {
-            fields: ['numero', 'zona', 'capacidad', 'fotos']
+            fields: ['numero', 'zona', 'capacidad', 'fotos','indicaciones']
         });
 
         if (newAula) {
@@ -105,7 +106,7 @@ export const updateAulaById = async (req, res) => {
     const { numero, zona, capacidad, fotos } = req.body;
     try {
         const aulas = await Aulas.findAll({
-            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos'],
+            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos','indicaciones'],
             where: { id }
         });
 
@@ -115,7 +116,8 @@ export const updateAulaById = async (req, res) => {
                     numero,
                     zona,
                     capacidad,
-                    fotos
+                    fotos,
+                    indicaciones
                 });
             });
             res.json({
