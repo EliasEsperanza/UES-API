@@ -30,6 +30,14 @@ export const Referencias = sequelize.define('referencias', {
     coordenadas: {
         type: DataTypes.STRING(255),
         allowNull: true
+    },
+    video_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'videos',
+            key: 'id'
+        }
     }
 }, {
     timestamps: false,
