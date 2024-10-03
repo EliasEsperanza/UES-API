@@ -30,6 +30,14 @@ export const Aulas = sequelize.define('aulas', {
     indicaciones:{
         type: DataTypes.TEXT,
         allowNull: true
+    },
+    video_id:{
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'videos',
+            key: 'id'
+        }
     }
 }, {
     timestamps: false,

@@ -1,6 +1,7 @@
 import redisClient from '../database/redis.js';
 import { Aulas } from '../models/Aulas.js';
 import { Zonas } from '../models/Zonas.js';
+import { Videos } from '../models/Videos.js';
 
 // Obtener todas las aulas (con caché en Redis)
 export const getAulas = async (req, res) => {
@@ -14,12 +15,19 @@ export const getAulas = async (req, res) => {
         }
 
         const aulas = await Aulas.findAll({
-            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos','indicaciones'],
-            include: {
-                model: Zonas,
-                as: 'zonaRelacionada',
-                attributes: ['nombre']
-            }
+            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos','indicaciones', 'video_id'],
+            include: [
+                {
+                    model: Zonas,
+                    as: 'zonaRelacionada',
+                    attributes: ['nombre']
+                },
+                {
+                    model: Videos,
+                    as: 'videoAula',
+                    attributes: ['url', 'nombre']
+                }
+            ]
         });
         
         await redisClient.setEx('aulas', 1800, JSON.stringify(aulas));
@@ -36,16 +44,17 @@ export const getAulas = async (req, res) => {
 
 
 export const createAula = async (req, res) => {
-    const { numero, zona, capacidad, fotos,indicaciones } = req.body;
+    const { numero, zona, capacidad, fotos,indicaciones, video_id } = req.body;
     try {
         const newAula = await Aulas.create({
             numero,
             zona,
             capacidad,
             fotos,
-            indicaciones
+            indicaciones,
+            video_id
         }, {
-            fields: ['numero', 'zona', 'capacidad', 'fotos','indicaciones']
+            fields: ['numero', 'zona', 'capacidad', 'fotos','indicaciones', 'video_id']
         });
 
         if (newAula) {
@@ -75,11 +84,18 @@ export const getAulaById = async (req, res) => {
 
         const aula = await Aulas.findOne({
             where: { id },
-            include: {
-                model: Zonas,
-                as: 'zonaRelacionada',
-                attributes: ['nombre']
-            }
+            include: [
+                {
+                    model: Zonas,
+                    as: 'zonaRelacionada',
+                    attributes: ['nombre']
+                },
+                {
+                    model: Videos,
+                    as: 'videoAula',
+                    attributes: ['url', 'nombre']
+                }
+            ]
         });
 
         if (aula) {
@@ -103,10 +119,10 @@ export const getAulaById = async (req, res) => {
 
 export const updateAulaById = async (req, res) => {
     const { id } = req.params;
-    const { numero, zona, capacidad, fotos } = req.body;
+    const { numero, zona, capacidad, fotos, video_id} = req.body;
     try {
         const aulas = await Aulas.findAll({
-            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos','indicaciones'],
+            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos','indicaciones', 'video_id'],
             where: { id }
         });
 
@@ -117,7 +133,8 @@ export const updateAulaById = async (req, res) => {
                     zona,
                     capacidad,
                     fotos,
-                    indicaciones
+                    indicaciones,
+                    video_id
                 });
             });
             res.json({
