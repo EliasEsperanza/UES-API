@@ -26,6 +26,10 @@ export const Aulas = sequelize.define('aulas', {
     fotos:{
         type: DataTypes.TEXT,
         allowNull: true
+    },
+    indicaciones:{
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     timestamps: false,

@@ -14,7 +14,7 @@ export const getAulas = async (req, res) => {
         }
 
         const aulas = await Aulas.findAll({
-            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos'],
+            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos', 'indicaciones'],
             include: {
                 model: Zonas,
                 as: 'zonaRelacionada',
