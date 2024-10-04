@@ -3,9 +3,9 @@ import {
     getFotosAulas,
     getFotosAulasById,
     getFotosByAulaId,
-    createFotosAulas,
-    updateFotosAulasById
-} from '../controllers/Aula_fotos_controller.js';
+    createFotoAulaRelation,
+    updateFotoAulaRelation
+} from '../controllers/Aula_fotos.controller.js';
 
 const router = new Router();
 
@@ -19,9 +19,10 @@ router.get('/aula_fotos/:aula_id/:fotos_id', getFotosAulasById);
 router.get('/aulas/:aula_id/fotos', getFotosByAulaId);
 
 // Crear una nueva relación entre aula y foto
-router.post('/aula_fotos', createFotosAulas);
+router.post('/aula_fotos', createFotoAulaRelation);
 
 // Actualizar una relación específica entre aula y foto
-router.put('/aula_fotos/:aula_id/:fotos_id', updateFotosAulasById);
+router.put('/aula_fotos/:aula_id/:fotos_id', updateFotoAulaRelation);
 
 export default router;
+
