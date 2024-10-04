@@ -1,10 +1,11 @@
 import { Router } from "express";
-import {getFotoReferencias,getFotoReferenciaById,getFotoReferenciaByReferenciaId} from '../controllers/FotosReferencias.controller.js';
+import { getFotosReferencias, getFotoReferenciaById, getFotosByReferenciaId, getReferenciasByFotoId } from "../controllers/FotosReferencias.controller.js";
 
-const router= new Router();
+const router = new Router();
 
-router.get('/FotoReferencias',getFotoReferencias);
-router.get('/FotoReferencias/:id',getFotoReferenciaById);
-router.put('/FotoReferencias/:referencia_id',getFotoReferenciaByReferenciaId);
+router.get('/fotos_referencias', getFotosReferencias);
+router.get('/fotos_referencias/:referencia_id/:foto_id', getFotoReferenciaById);
+router.get('/referencias/:referencia_id/fotos', getFotosByReferenciaId);
+router.get('/fotos/:foto_id/referencias', getReferenciasByFotoId);
 
 export default router;
