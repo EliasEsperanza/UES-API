@@ -45,19 +45,28 @@ export const getAulaVideoById = async (req, res) =>{
     }
 };
 
-export const getVideoByAulaId = async (req, res) =>{
+export const getVideoByAulaId = async (req, res) => {
     const { aula_id } = req.params;
     try {
-        const aulaVideos = await AulaVideos.findAll({
-            where: {
-                aula_id
-            }
-        });
-        if (!aulaVideos) {
-            return res.status(404).json({
-                message: "No se encontraron videos para la aula"
+        const cachedAulaVideos = await redisClient.get(`aula_video_${aula_id}`);
+        if (cachedAulaVideos) {
+            return res.json({
+                data: JSON.parse(cachedAulaVideos)
             });
         }
+
+        const aulaVideos = await AulaVideos.findAll({
+            where: { aula_id }
+        });
+
+        if (aulaVideos.length === 0) {
+            return res.status(404).json({
+                message: "No se encontraron videos para el aula"
+            });
+        }
+
+        await redisClient.setEx(`aula_video_${aula_id}`, 1800, JSON.stringify(aulaVideos));
+
         res.json({
             data: aulaVideos
         });

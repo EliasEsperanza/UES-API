@@ -1,24 +1,48 @@
 import redisClient from "../database/redis.js";
 import { FotosAulas } from "../models/Aula_Fotos.js";
 
-// Obtener todas las relaciones foto-aula
 export const getFotosAulas = async (req, res) => {
     try {
-        const cachedFotosAulas = await redisClient.get('fotos_aulas');
+        const cachedFotosAulas = await redisClient.get('aula_fotos');
         if (cachedFotosAulas) {
             return res.json({
                 data: JSON.parse(cachedFotosAulas)
             });
         }
+        
+        const fotosaulas = await FotosAulas.findAll();
+        
+        await redisClient.setEx('aula_fotos', 1800, JSON.stringify(fotosaulas));
+        
+        res.json({
+            data: fotosaulas
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error interno del servidor"
+        });
+    }
+};
 
-        const fotosAulas = await FotosAulas.findAll();
+export const getFotosAulasById = async (req, res) => {
+    const { aula_id, fotos_id } = req.params;
+    try {
+        const fotosaulas = await FotosAulas.findOne({
+            where: {
+                aula_id,
+                fotos_id
+            }
+        });
 
-        await redisClient.setEx('fotos_aulas', 1800, JSON.stringify(fotosAulas));
+        if (!fotosaulas) {
+            return res.status(404).json({
+                message: "No se encontró la relación aula-fotos"
+            });
+        }
 
         res.json({
-            data: fotosAulas
+            data: fotosaulas
         });
-
     } catch (error) {
         res.status(500).json({
             message: "Error interno del servidor"
@@ -26,73 +50,31 @@ export const getFotosAulas = async (req, res) => {
     }
 };
 
-// Obtener una relación específica por fotos_id y aula_id
-export const getFotosAulasById = async (req, res) => {
-    const { fotos_id, aula_id } = req.params;
-    try {
-        const cachedFotosAulas = await redisClient.get(`fotos_aulas:${fotos_id}:${aula_id}`);
-
-        if (cachedFotosAulas) {
-            return res.json({
-                data: JSON.parse(cachedFotosAulas)
-            });
-        }
-
-        const fotosAulas = await FotosAulas.findOne({
-            where: {
-                fotos_id,
-                aula_id
-            }
-        });
-
-        if (fotosAulas) {
-            await redisClient.setEx(`fotos_aulas:${fotos_id}:${aula_id}`, 1800, JSON.stringify(fotosAulas));
-            return res.json({
-                data: fotosAulas
-            });
-        } else {
-            return res.status(404).json({
-                message: "Relación foto-aula no encontrada"
-            });
-        }
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Error interno del servidor"
-        });
-    }
-};
-
-// Obtener todas las fotos de un aula específica
 export const getFotosByAulaId = async (req, res) => {
     const { aula_id } = req.params;
-    
     try {
-        const cachedFotos = await redisClient.get(`fotos_aulas:${aula_id}`);
-        
-        if (cachedFotos) {
+        const cachedFotosAula = await redisClient.get(`aula_fotos_${aula_id}`);
+        if (cachedFotosAula) {
             return res.json({
-                data: JSON.parse(cachedFotos)
+                data: JSON.parse(cachedFotosAula)
             });
         }
-
-        const fotos = await FotosAulas.findAll({
-            where: {
-                aula_id
-            }
+        
+        const fotosaulas = await FotosAulas.findAll({
+            where: { aula_id }
         });
 
-        if (fotos.length > 0) {
-            await redisClient.setEx(`fotos_aulas:${aula_id}`, 1800, JSON.stringify(fotos));
-            return res.json({
-                data: fotos
-            });
-        } else {
+        if (fotosaulas.length === 0) {
             return res.status(404).json({
-                message: "No se encontraron fotos para este aula"
+                message: "No se encontraron fotos para el aula"
             });
         }
-        
+
+        await redisClient.setEx(`aula_fotos_${aula_id}`, 1800, JSON.stringify(fotosaulas));
+
+        res.json({
+            data: fotosaulas
+        });
     } catch (error) {
         res.status(500).json({
             message: "Error interno del servidor"
@@ -101,21 +83,16 @@ export const getFotosByAulaId = async (req, res) => {
 };
 
 export const createFotosAulas = async (req, res) => {
-    const { fotos_id, aula_id } = req.body;
+    const { aula_id, fotos_id } = req.body;
     try {
-        const newFotosAulas = await FotosAulas.create({
-            fotos_id,
-            aula_id
-        }, {
-            fields: ['fotos_id', 'aula_id']
+        const fotosaulas = await FotosAulas.create({
+            aula_id,
+            fotos_id
         });
 
-        if (newFotosAulas) {
-            res.json({
-                message: "Relación foto-aula creada exitosamente",
-                data: newFotosAulas
-            });
-        }
+        res.json({
+            data: fotosaulas
+        });
     } catch (error) {
         res.status(500).json({
             message: "Error interno del servidor"
@@ -124,49 +101,29 @@ export const createFotosAulas = async (req, res) => {
 };
 
 export const updateFotosAulasById = async (req, res) => {
-    const { fotos_id, aula_id } = req.params;
-    const { new_fotos_id, new_aula_id } = req.body;
+    const { aula_id, fotos_id } = req.params;
+    const { new_aula_id, new_fotos_id } = req.body;
     try {
-        const fotosAulas = await FotosAulas.findOne({
+        const fotosaulas = await FotosAulas.findOne({
             where: {
-                fotos_id,
-                aula_id
+                aula_id,
+                fotos_id
             }
         });
 
-        if (fotosAulas) {
-            await fotosAulas.update({
-                fotos_id: new_fotos_id,
-                aula_id: new_aula_id
-            });
-            res.json({
-                message: "Relación foto-aula actualizada exitosamente",
-                data: fotosAulas
-            });
-        } else {
-            res.status(404).json({
-                message: "Relación foto-aula no encontrada"
+        if (!fotosaulas) {
+            return res.status(404).json({
+                message: "No se encontró la relación aula-fotos"
             });
         }
-    } catch (error) {
-        res.status(500).json({
-            message: "Error interno del servidor"
-        });
-    }
-};
 
-export const deleteFotosAulasById = async (req, res) => {
-    const { fotos_id, aula_id } = req.params;
-    try {
-        const deletedRows = await FotosAulas.destroy({
-            where: {
-                fotos_id,
-                aula_id
-            }
-        });
+        fotosaulas.aula_id = new_aula_id || fotosaulas.aula_id;
+        fotosaulas.fotos_id = new_fotos_id || fotosaulas.fotos_id;
+
+        await fotosaulas.save();
 
         res.json({
-            message: deletedRows === 1 ? "Relación foto-aula eliminada exitosamente" : "Relación foto-aula no encontrada"
+            data: fotosaulas
         });
     } catch (error) {
         res.status(500).json({
