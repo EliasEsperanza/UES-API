@@ -7,7 +7,8 @@ import aulasReferencias from './routes/aula_referencia.routes.js';
 import aulaZonas from './routes/aulas-zonas.routes.js';
 import Zonas from './routes/zona.routes.js';
 import videosRoutes from './routes/videos.routes.js';
-import videosReferencias from './routes/video_referencia.routes.js'
+import videosReferencias from './routes/video_referencia.routes.js';
+import FotosReferencias from './routes/fotos.routes.js';
 
 const corsOptions = {
     origin: '*',
@@ -27,5 +28,6 @@ app.use(aulaZonas);
 app.use(Zonas);
 app.use(videosRoutes);
 app.use(videosReferencias);
+app.use(FotosReferencias);
 
 export default app;
