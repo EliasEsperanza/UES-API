@@ -1,4 +1,4 @@
-import { sequelize } from "../database/database";
+import { sequelize } from "../database/database.js";
 import { DataTypes } from "sequelize";
 import { Aulas } from "./Aulas.js";
 import { Videos } from "./Videos.js";
