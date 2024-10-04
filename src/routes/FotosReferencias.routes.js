@@ -7,6 +7,6 @@ router.get('/fotos_referencias', getFotosReferencias);
 router.get('/fotos_referencias/:referencia_id/:foto_id', getFotoReferenciaById);
 router.get('/referencias/:referencia_id/fotos', getFotosByReferenciaId);
 router.get('/fotos/:foto_id/referencias', getReferenciasByFotoId);
-router.get('/foros_referencias/ordenByReferencia', getFotosReferenciasOrdenByReferencias);
+router.get('/fotos_referencias/ordenByReferencia', getFotosReferenciasOrdenByReferencias);
 
 export default router;
