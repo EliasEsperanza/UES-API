@@ -24,4 +24,3 @@ export const FotosAulas = sequelize.define('fotos_aulas', {
     timestamps: false, 
     tableName: 'fotos_aulas'  
 });
-
