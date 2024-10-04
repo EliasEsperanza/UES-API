@@ -23,10 +23,6 @@ export const Aulas = sequelize.define('aulas', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    fotos:{
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
     indicaciones:{
         type: DataTypes.TEXT,
         allowNull: true
