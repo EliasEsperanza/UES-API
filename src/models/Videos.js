@@ -1,4 +1,4 @@
-import { Sequelize } from "../database/database.js";
+import { sequelize } from "../database/database.js";
 import { DataTypes } from 'sequelize';
 
 export const Videos = Sequelize.define('videos', {
