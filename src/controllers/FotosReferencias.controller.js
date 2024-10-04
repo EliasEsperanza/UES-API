@@ -1,5 +1,5 @@
 import redisClient from "../database/redis.js";
-import { FotoReferencia } from "../models/FotoReferencia.js";
+import { FotoReferencia } from "../models/Foto_referencia.js";
 
 export const getFotoReferencias = async (req, res) => {
     try {
