@@ -15,10 +15,6 @@ export const Referencias = sequelize.define('referencias', {
         type: DataTypes.STRING(255),
         allowNull: true
     },
-    foto: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
     zona: {
         type: DataTypes.INTEGER,
         allowNull: false,
