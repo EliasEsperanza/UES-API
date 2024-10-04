@@ -24,3 +24,6 @@ export const FotosAulas = sequelize.define('fotos_aulas', {
     timestamps: false, 
     tableName: 'fotos_aulas'  
 });
+
+Aulas.belongsToMany(Fotos, { through: FotosAulas, foreignKey: 'aula_id' });
+Fotos.belongsToMany(Aulas, { through: FotosAulas, foreignKey: 'fotos_id' });
