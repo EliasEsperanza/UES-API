@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getVideosReferencia,getVideoReferenciaById,getVideoReferenciaByReferenciaId } from "../controllers/Video_Referencia.controller";
+import { getVideosReferencia,getVideoReferenciaById,getVideoReferenciaByReferenciaId } from "../controllers/Video_Referencia.controller.js";
 
 const router= new Router();
 

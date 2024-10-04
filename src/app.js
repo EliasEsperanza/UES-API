@@ -10,7 +10,7 @@ import videosRoutes from './routes/videos.routes.js';
 import videosReferencias from './routes/video_referencia.routes.js';
 import Fotos from './routes/fotos.routes.js';
 import FotosReferencias from './routes/FotosReferencias.routes.js';
-
+import aulaVideos from './routes/aula_video.routes.js';
 
 const corsOptions = {
     origin: '*',
@@ -32,6 +32,6 @@ app.use(videosRoutes);
 app.use(videosReferencias);
 app.use(Fotos);
 app.use(FotosReferencias);
-
+app.use(aulaVideos);
 
 export default app;
