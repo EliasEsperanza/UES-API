@@ -6,6 +6,7 @@ import { AulaZona } from './Aula_Zona.js';
 import { Videos } from './Videos.js';
 import { VideoReferencia } from './Video_Referencia.js';
 import { FotosAulas } from './Aula_Fotos.js';
+import { Fotos } from './Fotos.js';
 
 //asociaciones AulaReferencia
 Aulas.belongsToMany(Referencias, { through: AulaReferencia, foreignKey: 'aula_id' });
