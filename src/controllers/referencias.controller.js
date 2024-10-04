@@ -3,7 +3,12 @@ import { Referencias } from '../models/Referencias.js';
 
 export const getReferencias = async (req, res) => {
     try {
-        const cachedReferencias = await redisClient.get('referencias');
+        let cachedReferencias;
+        try {
+            cachedReferencias = await redisClient.get('referencias');
+        } catch (redisError) {
+            console.error("Error al obtener datos de Redis", redisError);
+        }
 
         if (cachedReferencias) {
             return res.json({
@@ -13,13 +18,18 @@ export const getReferencias = async (req, res) => {
 
         const referencias = await Referencias.findAll();
         
-        await redisClient.setEx('referencias', 1800, JSON.stringify(referencias));
+        try {
+            await redisClient.setEx('referencias', 1800, JSON.stringify(referencias));
+        } catch (redisError) {
+            console.error("Error al almacenar datos en Redis", redisError);
+        }
 
-        res.json({
+        return res.json({
             data: referencias
         });
     } catch (error) {
-        res.status(500).json({
+        console.error("Error en el servidor", error);
+        return res.status(500).json({
             message: "Error interno del servidor"
         });
     }
