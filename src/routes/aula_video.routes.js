@@ -3,8 +3,13 @@ import { getAulasVideos, getAulaVideoById, getVideoByAulaId } from "../controlle
 
 const router = new Router();
 
-router.get('/aula_video', getAulasVideos);
-router.get('/aula_video/:aula_id/:video_id', getAulaVideoById);
+// Ruta que obtiene todos los videos de un aula
 router.get('/aula_video/:aula_id/videos', getVideoByAulaId);
+
+// Ruta que obtiene una relación específica entre aula y video
+router.get('/aula_video/:aula_id/:video_id', getAulaVideoById);
+
+// Ruta que obtiene todas las relaciones aula-video
+router.get('/aula_video', getAulasVideos);
 
 export default router;
