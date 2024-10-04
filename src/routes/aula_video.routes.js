@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { getAulasVideos, getAulaVideoById, getVideoByAulaId } from "../controllers/Aula_video.controller.js";
-import router from "./aula_referencia.routes";
 
 const router = new Router();
 
