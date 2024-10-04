@@ -91,3 +91,24 @@ export const getFotosByReferenciaId = async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
+
+export const getFotosReferenciasOrdenByReferencias = async (req,res) =>{
+    try {
+        
+        const fotosreferencias = await FotoReferencia.findAll({
+            include: [{ model: Fotos }, { model: Referencias }],
+            order: [['referencia_id', 'ASC']]
+        });
+
+        if (!fotosreferencias || fotosreferencias.length === 0) {
+            console.log("No se encontraron relaciones foto-referencia.");
+            return res.status(404).json({ message: "No se encontraron relaciones foto-referencia" });
+        }
+
+        console.log("Relaciones foto-referencia encontradas:", fotosreferencias);
+        res.json({ data: fotosreferencias });
+    } catch (error) {
+        console.error("Error al obtener todas las relaciones de foto-referencia:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+};

@@ -70,3 +70,32 @@ export const getFotosByAulaId = async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
+
+export const getFotosOrdenByAulaId = async (req,res) =>{
+    try {
+        const cachedFotosAula = await redisClient.get(`fotosOrdenByAula`);
+        
+        if (cachedFotosAula) {
+            
+            return res.json({
+                data: JSON.parse(cachedFotosAula)
+            });
+        }
+        
+        
+        const fotosaulas = await FotosAulas.findAll({
+            include: [{ model: Aulas }, { model: Fotos }],
+            order: [['aula_id', 'ASC']]
+        });
+        
+        
+        await redisClient.setEx('fotosOrdenByAula', 1800, JSON.stringify(fotosaulas));
+        res.json({ 
+            data: fotosaulas 
+        });
+
+        
+    } catch (error) {
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+};
