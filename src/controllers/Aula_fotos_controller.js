@@ -1,5 +1,5 @@
 import redisClient from "../database/redis.js";
-import { FotosAulas } from "../models/Aulas_Fotos.js";
+import { FotosAulas } from "../models/Aula_Fotos.js";
 
 // Obtener todas las relaciones foto-aula
 export const getFotosAulas = async (req, res) => {
