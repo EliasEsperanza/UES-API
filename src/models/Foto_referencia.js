@@ -1,12 +1,14 @@
 import { sequelize } from "../database/database.js";
 import { DataTypes } from 'sequelize';
+import { Fotos } from './Fotos.js';
+import { Referencias } from './Referencias.js';
 
 export const FotoReferencia = sequelize.define('foto_referencia', {
     foto_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'fotos', 
+            model: Fotos, 
             key: 'id'
         }
     },
@@ -14,7 +16,7 @@ export const FotoReferencia = sequelize.define('foto_referencia', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'referencias', 
+            model: Referencias, 
             key: 'id'
         }
     }
