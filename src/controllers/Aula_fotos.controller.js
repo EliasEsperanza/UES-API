@@ -13,20 +13,21 @@ const getCachedData = async (key) => {
 // Obtener todas las relaciones aula-fotos
 export const getFotosAulas = async (req, res) => {
     try {
-        const cachedFotosAulas = await getCachedData('aula_fotos');
-        if (cachedFotosAulas) return res.json({ data: cachedFotosAulas });
-
         const fotosaulas = await FotosAulas.findAll({
             include: [{ model: Aulas }, { model: Fotos }]
         });
 
-        await cacheData('aula_fotos', fotosaulas);
+        if (!fotosaulas) return res.status(404).json({ message: "No se encontraron registros de aula-fotos" });
+
         res.json({ data: fotosaulas });
     } catch (error) {
-        res.status(500).json({ message: "Error interno del servidor", error });
+        // Log del error en la consola del servidor para diagnóstico
+        console.error("Error al obtener relaciones aula-fotos: ", error);
+
+        // Devolver un mensaje más detallado con el stack del error
+        res.status(500).json({ message: "Error interno del servidor", error: error.message || "Detalles no disponibles" });
     }
 };
-
 // Obtener una relación específica entre aula y foto por sus IDs
 export const getFotosAulasById = async (req, res) => {
     const { aula_id, foto_id } = req.params;
