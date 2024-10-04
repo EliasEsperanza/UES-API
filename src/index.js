@@ -2,6 +2,8 @@ import app from './app.js';
 import { sequelize } from "./database/database.js";
 import dotenv from "dotenv";
 
+import './models/Associations.js';
+
 if (process.env.NODE_ENV !== "production") {
     dotenv.config();
 }

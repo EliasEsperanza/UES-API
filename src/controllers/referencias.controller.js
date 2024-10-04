@@ -27,16 +27,17 @@ export const getReferencias = async (req, res) => {
 
 
 export const createReferencia = async (req, res) => {
-    const { nombre, descripcion, foto, zona, coordenadas } = req.body;
+    const { nombre, descripcion, foto, zona, coordenadas, video_id } = req.body;
     try {
         const newReferencia = await Referencias.create({
             nombre,
             descripcion,
             foto,
             zona,
-            coordenadas
+            coordenadas,
+            video_id
         }, {
-            fields: ['nombre', 'descripcion', 'foto', 'zona', 'coordenadas']
+            fields: ['nombre', 'descripcion', 'foto', 'zona', 'coordenadas', 'video_id']
         });
         if (newReferencia) {
             res.json({
@@ -92,10 +93,10 @@ export const getReferenciaById = async (req, res) => {
 
 export const updateReferenciaById = async (req, res) => {
     const { id } = req.params;
-    const { nombre, descripcion, foto, zona, coordenadas } = req.body;
+    const { nombre, descripcion, foto, zona, coordenadas, video_id } = req.body;
     try {
         const referencias = await Referencias.findAll({
-            attributes: ['id', 'nombre', 'descripcion', 'foto', 'zona', 'coordenadas'],
+            attributes: ['id', 'nombre', 'descripcion', 'foto', 'zona', 'coordenadas', 'video_id'],
             where: {
                 id
             }
@@ -107,7 +108,8 @@ export const updateReferenciaById = async (req, res) => {
                     descripcion,
                     foto,
                     zona,
-                    coordenadas
+                    coordenadas,
+                    video_id
                 });
             });
             res.json({

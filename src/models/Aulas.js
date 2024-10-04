@@ -1,6 +1,5 @@
 import { sequelize } from "../database/database.js";
 import { DataTypes } from 'sequelize';
-import { Zonas } from "./Zonas.js";
 
 export const Aulas = sequelize.define('aulas', {
     id: {
@@ -16,17 +15,31 @@ export const Aulas = sequelize.define('aulas', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Zonas,
+            model: 'zonas',
             key: 'id'
         }
     },
     capacidad: {
         type: DataTypes.INTEGER,
         allowNull: true
+    },
+    fotos:{
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    indicaciones:{
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    video_id:{
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'videos',
+            key: 'id'
+        }
     }
 }, {
     timestamps: false,
     tableName: 'aulas'
 });
-
-Aulas.belongsTo(Zonas, { foreignKey: 'zona' });
