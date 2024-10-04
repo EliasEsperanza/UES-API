@@ -1,23 +1,43 @@
 import redisClient from "../database/redis.js";
 import { VideoReferencia } from "../models/Video_Referencia.js"; 
 
-export const getVideosReferencia = async (req, res) => {
+export const getVideosReferencia = async (req, res) =>{
     try {
-        const cachedReferencias = await redisClient.get('video_referencia');
-        if (cachedReferencias) {
+        const cachedVideosReferencia = await redisClient.get('video_referencia');
+        if (cachedVideosReferencia) {
             return res.json({
-                data: JSON.parse(cachedReferencias)
+                data: JSON.parse(cachedVideosReferencia)
             });
         }
+        const videosReferencia = await VideoReferencia.findAll();
+        await redisClient.setEx('video_referencia', 1800, JSON.stringify(videosReferencia));
+        res.json({
+            data: videosReferencia
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error interno del servidor"
+        });
+    }
+};
 
-        const videoReferencia = await VideoReferencia.findAll();
-
-        await redisClient.setEx('video_referencia', 1800, JSON.stringify(videoReferencia));
-
+export const getVideoReferenciaById = async (req, res) =>{
+    const { video_id, referencia_id } = req.params;
+    try {
+        const videoReferencia = await VideoReferencia.findOne({
+            where: {
+                video_id,
+                referencia_id
+            }
+        });
+        if (!videoReferencia) {
+            return res.status(404).json({
+                message: "No se encontró la relación video-referencia"
+            });
+        }
         res.json({
             data: videoReferencia
         });
-
     } catch (error) {
         res.status(500).json({
             message: "Error interno del servidor"
@@ -25,36 +45,22 @@ export const getVideosReferencia = async (req, res) => {
     }
 };
 
-
-export const getVideoReferenciaById = async (req, res) => {
-    const { referencia_id, video_id } = req.params;
+export const getReferenciaByVideoId = async (req, res) =>{
+    const { video_id } = req.params;
     try {
-        const cachedReferencia = await redisClient.get(`video_referencia:${referencia_id}:${video_id}`);
-
-        if (cachedReferencia) {
-            return res.json({
-                data: JSON.parse(cachedReferencia)
-            });
-        }
-
-        const videoReferencia = await VideoReferencia.findOne({
+        const videoReferencias = await VideoReferencia.findAll({
             where: {
-                referencia_id,
                 video_id
             }
         });
-
-        if (videoReferencia) {
-            await redisClient.setEx(`video_referencia:${referencia_id}:${video_id}`, 1800, JSON.stringify(videoReferencia));
-            return res.json({
-                data: videoReferencia
-            });
-        } else {
+        if (!videoReferencias) {
             return res.status(404).json({
-                message: "Referencia de video no encontrada"
+                message: "No se encontraron referencias para el video"
             });
         }
-
+        res.json({
+            data: videoReferencias
+        });
     } catch (error) {
         res.status(500).json({
             message: "Error interno del servidor"
@@ -62,38 +68,25 @@ export const getVideoReferenciaById = async (req, res) => {
     }
 };
 
-export const getVideoReferenciaByReferenciaId = async (req, res) => {
+export const getVideoByReferenciaId = async (req, res) =>{
     const { referencia_id } = req.params;
-    
     try {
-        const cachedReferencias = await redisClient.get(`video_referencia:${referencia_id}`);
-        
-        if (cachedReferencias) {
-            return res.json({
-                data: JSON.parse(cachedReferencias)
-            });
-        }
-
-        const videoReferencia = await VideoReferencia.findAll({
+        const videoReferencias = await VideoReferencia.findAll({
             where: {
                 referencia_id
             }
         });
-
-        if (videoReferencia.length > 0) {
-            await redisClient.setEx(`video_referencia:${referencia_id}`, 1800, JSON.stringify(videoReferencia));
-            return res.json({
-                data: videoReferencia
-            });
-        } else {
+        if (!videoReferencias) {
             return res.status(404).json({
-                message: "No se encontraron videos para esta referencia"
+                message: "No se encontraron videos para la referencia"
             });
         }
-        
+        res.json({
+            data: videoReferencias
+        });
     } catch (error) {
         res.status(500).json({
             message: "Error interno del servidor"
         });
     }
-};
+}; 
