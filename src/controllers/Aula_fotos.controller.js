@@ -99,3 +99,27 @@ export const getFotosOrdenByAulaId = async (req,res) =>{
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
+export const getFotosByAulaIdOrdenAsc = async (req, res) => {
+    const { aula_id } = req.params;
+    try {
+        const cachedFotosAula = await redisClient.get(`aula_fotos_${aula_id}`);
+        if (cachedFotosAula) {
+            return res.json({ data: JSON.parse(cachedFotosAula) });
+        }
+        
+        const fotosaulas = await FotosAulas.findAll({
+            where: { aula_id },
+            include: [{ model: Fotos }],
+            order: [['aula_id', 'ASC']]
+        });
+
+        if (fotosaulas.length === 0) {
+            return res.status(404).json({ message: "No se encontraron fotos para el aula" });
+        }
+
+        await redisClient.setEx(`aula_fotos_${aula_id}`, 1800, JSON.stringify(fotosaulas));
+        res.json({ data: fotosaulas });
+    } catch (error) {
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+};
