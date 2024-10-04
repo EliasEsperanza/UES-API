@@ -6,7 +6,7 @@ import {
     createFotosAulas,
     updateFotosAulasById,
     deleteFotosAulasById
-} from '../controllers/aula_fotos_controller.js';
+} from '../controllers/Aula_fotos_controller.js';
 
 const router = new Router();
 
