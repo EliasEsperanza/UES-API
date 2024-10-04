@@ -3,7 +3,12 @@ import { Referencias } from '../models/Referencias.js';
 
 export const getReferencias = async (req, res) => {
     try {
-        const cachedReferencias = await redisClient.get('referencias');
+        let cachedReferencias;
+        try {
+            cachedReferencias = await redisClient.get('referencias');
+        } catch (redisError) {
+            console.error("Error al obtener datos de Redis", redisError);
+        }
 
         if (cachedReferencias) {
             return res.json({
@@ -13,13 +18,18 @@ export const getReferencias = async (req, res) => {
 
         const referencias = await Referencias.findAll();
         
-        await redisClient.setEx('referencias', 1800, JSON.stringify(referencias));
+        try {
+            await redisClient.setEx('referencias', 1800, JSON.stringify(referencias));
+        } catch (redisError) {
+            console.error("Error al almacenar datos en Redis", redisError);
+        }
 
-        res.json({
+        return res.json({
             data: referencias
         });
     } catch (error) {
-        res.status(500).json({
+        console.error("Error en el servidor", error);
+        return res.status(500).json({
             message: "Error interno del servidor"
         });
     }
@@ -27,17 +37,16 @@ export const getReferencias = async (req, res) => {
 
 
 export const createReferencia = async (req, res) => {
-    const { nombre, descripcion, foto, zona, coordenadas, video_id } = req.body;
+    const { nombre, descripcion, zona, coordenadas, video_id } = req.body;
     try {
         const newReferencia = await Referencias.create({
             nombre,
             descripcion,
-            foto,
             zona,
             coordenadas,
             video_id
         }, {
-            fields: ['nombre', 'descripcion', 'foto', 'zona', 'coordenadas', 'video_id']
+            fields: ['nombre', 'descripcion', 'zona', 'coordenadas', 'video_id']
         });
         if (newReferencia) {
             res.json({
@@ -93,10 +102,10 @@ export const getReferenciaById = async (req, res) => {
 
 export const updateReferenciaById = async (req, res) => {
     const { id } = req.params;
-    const { nombre, descripcion, foto, zona, coordenadas, video_id } = req.body;
+    const { nombre, descripcion, zona, coordenadas, video_id } = req.body;
     try {
         const referencias = await Referencias.findAll({
-            attributes: ['id', 'nombre', 'descripcion', 'foto', 'zona', 'coordenadas', 'video_id'],
+            attributes: ['id', 'nombre', 'descripcion', 'zona', 'coordenadas', 'video_id'],
             where: {
                 id
             }
@@ -106,7 +115,6 @@ export const updateReferenciaById = async (req, res) => {
                 await referencia.update({
                     nombre,
                     descripcion,
-                    foto,
                     zona,
                     coordenadas,
                     video_id
