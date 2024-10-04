@@ -1,14 +1,14 @@
 import { sequelize } from "../database/database.js";
 import { DataTypes } from 'sequelize';
-import { Fotos } from "./Fotos.js";
-import { Referencias } from "./Referencias.js";
+import { Aulas } from './Aulas.js';
+import { Referencias } from './Referencias.js';
 
-export const FotoReferencia = sequelize.define('foto_referencia', {
-    foto_id: {
+export const AulaReferencia = sequelize.define('aula_referencia', {
+    aula_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         references: {
-            model: Fotos,
+            model: Aulas,
             key: 'id'
         }
     },
@@ -22,12 +22,6 @@ export const FotoReferencia = sequelize.define('foto_referencia', {
     }
 }, {
     timestamps: false,
-    tableName: 'foto_referencia'
+    tableName: 'aula_referencia'
 });
 
-// Asociaciones
-Fotos.hasMany(FotoReferencia, { foreignKey: 'foto_id' });
-FotoReferencia.belongsTo(Fotos, { foreignKey: 'foto_id' });
-
-Referencias.hasMany(FotoReferencia, { foreignKey: 'referencia_id' });
-FotoReferencia.belongsTo(Referencias, { foreignKey: 'referencia_id' });
