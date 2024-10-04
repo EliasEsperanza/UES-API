@@ -29,4 +29,4 @@ Videos.belongsToMany(Referencias,{through: VideoReferencia,foreignKey: 'video_id
 Referencias.belongsToMany(Videos,{through: VideoReferencia, foreignKey: 'referencia_id'});
 
 Aulas.belongsToMany(Fotos, { through: FotosAulas, foreignKey: 'aula_id' });
-Fotos.belongsToMany(Aulas, { through: FotosAulas, foreignKey: 'fotos_id' });
+Fotos.belongsToMany(Aulas, { through: FotosAulas, foreignKey: 'foto_id' });
