@@ -4,8 +4,7 @@ import {
     getFotosAulasById,
     getFotosByAulaId,
     createFotosAulas,
-    updateFotosAulasById,
-    deleteFotosAulasById
+    updateFotosAulasById
 } from '../controllers/Aula_fotos_controller.js';
 
 const router = new Router();
@@ -24,8 +23,5 @@ router.post('/aula_fotos', createFotosAulas);
 
 // Actualizar una relación específica entre aula y foto
 router.put('/aula_fotos/:aula_id/:fotos_id', updateFotosAulasById);
-
-// Eliminar una relación específica entre aula y foto (faltaba en el controlador)
-router.delete('/aula_fotos/:aula_id/:fotos_id', deleteFotosAulasById);
 
 export default router;
