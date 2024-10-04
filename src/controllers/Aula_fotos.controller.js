@@ -1,5 +1,7 @@
 import redisClient from "../database/redis.js";
 import { FotosAulas } from "../models/Aula_Fotos.js";
+import { Aulas } from "../models/Aulas.js";
+import { Fotos } from "../models/Fotos.js"; 
 
 const cacheData = async (key, data, expiration = 1800) => {
     await redisClient.setEx(key, expiration, JSON.stringify(data));
