@@ -12,8 +12,7 @@ import Fotos from './routes/fotos.routes.js';
 import FotosAulaRoutes from './routes/fotos_aula.routes.js';
 import FotosReferencias from './routes/FotosReferencias.routes.js';
 import aulaVideos from './routes/aula_video.routes.js';
-import Fotos from './routes/fotos.routes.js';
-import FotosAulaRoutes from './routes/fotos_aula.routes.js';
+
 
 const corsOptions = {
     origin: '*',
