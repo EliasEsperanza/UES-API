@@ -4,6 +4,7 @@ import { AulaReferencia } from './Aula_Referencia.js';
 import { Zonas } from './Zonas.js';
 import { AulaZona } from './Aula_Zona.js';
 import { Videos } from './Videos.js';
+import { VideoReferencia } from './Video_Referencia.js';
 
 //asociaciones AulaReferencia
 Aulas.belongsToMany(Referencias, { through: AulaReferencia, foreignKey: 'aula_id' });
@@ -20,4 +21,9 @@ Referencias.belongsTo(Zonas, { foreignKey: 'zona', as: 'zonaReferencia' });
 //Asociaciones de videos
 Referencias.belongsTo(Videos, { foreignKey: 'video_id', as: 'videoReferencia' });
 Aulas.belongsTo(Videos, { foreignKey: 'video_id', as: 'videoAula' });
+
+//Asociaciones VideoReferencia
+Videos.belongsToMany(Referencias,{through: VideoReferencia,foreignKey: 'video_id'});
+Referencias.belongsToMany(Videos,{through: VideoReferencia, foreignKey: 'referencia_id'});
+
 
