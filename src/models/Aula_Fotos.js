@@ -24,3 +24,10 @@ export const FotosAulas = sequelize.define('fotos_aulas', {
     timestamps: false, 
     tableName: 'fotos_aulas'  
 });
+
+// Asociaciones
+Fotos.hasMany(FotosAulas, { foreignKey: 'foto_id' });
+FotosAulas.belongsTo(Fotos, { foreignKey: 'foto_id' });
+
+Aulas.hasMany(FotosAulas, { foreignKey: 'aula_id' });
+FotosAulas.belongsTo(Aulas, { foreignKey: 'aula_id' });

@@ -3,7 +3,7 @@ import { DataTypes } from 'sequelize';
 import { Fotos } from "./Fotos.js";
 import { Referencias } from "./Referencias.js";
 
-export const FotoReferencia = sequelize.define('foto_referencia', {
+export const FotoReferencia = sequelize.define('fotos_referencias', {
     foto_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -22,7 +22,7 @@ export const FotoReferencia = sequelize.define('foto_referencia', {
     }
 }, {
     timestamps: false,
-    tableName: 'foto_referencia'
+    tableName: 'fotos_referencias'
 });
 
 // Asociaciones
