@@ -7,7 +7,6 @@ import { Videos } from './Videos.js';
 import { VideoReferencia } from './Video_Referencia.js';
 import { FotosAulas } from './Aula_Fotos.js';
 import { Fotos } from './Fotos.js';
-import { FotoReferencia } from './Foto_referencia.js';
 
 //asociaciones AulaReferencia
 Aulas.belongsToMany(Referencias, { through: AulaReferencia, foreignKey: 'aula_id' });
@@ -31,6 +30,3 @@ Referencias.belongsToMany(Videos,{through: VideoReferencia, foreignKey: 'referen
 
 Aulas.belongsToMany(Fotos, { through: FotosAulas, foreignKey: 'aula_id' });
 Fotos.belongsToMany(Aulas, { through: FotosAulas, foreignKey: 'foto_id' });
-
-Fotos.belongsToMany(Referencias, { through: FotoReferencia, foreignKey: 'foto_id' });
-Referencias.belongsToMany(Fotos, { through: FotoReferencia, foreignKey: 'referencia_id' });
