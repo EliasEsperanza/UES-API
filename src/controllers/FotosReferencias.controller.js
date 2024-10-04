@@ -1,102 +1,90 @@
 import redisClient from "../database/redis.js";
 import { FotoReferencia } from "../models/Foto_referencia.js";
+import { Fotos } from "../models/Fotos.js";
+import { Referencias } from "../models/Referencias.js";
 
-export const getFotoReferencias = async (req, res) => {
+export const getFotosReferencias = async (req, res) => {
     try {
-        const cachedFotoReferencias = await redisClient.get('foto_referencias');
-
-        if (cachedFotoReferencias) {
+        const cachedFotosReferencias = await redisClient.get('foto_referencia');
+        if (cachedFotosReferencias) {
             return res.json({
-                data: JSON.parse(cachedFotoReferencias)
+                data: JSON.parse(cachedFotosReferencias)
             });
         }
-
-        const fotoReferencias = await FotoReferencia.findAll({
-            attributes: ['foto_id', 'referencia_id']
+        
+        const fotosreferencias = await FotoReferencia.findAll({
+            include: [{ model: Fotos }, { model: Referencias }]
         });
-
-        await redisClient.setEx('foto_referencias', 1800, JSON.stringify(fotoReferencias));
-
-        res.json({
-            data: fotoReferencias
-        });
+        
+        await redisClient.setEx('foto_referencia', 1800, JSON.stringify(fotosreferencias));
+        res.json({ data: fotosreferencias });
     } catch (error) {
-        res.status(500).json({
-            message: "Error interno del servidor"
-        });
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 };
 
 export const getFotoReferenciaById = async (req, res) => {
-    const { id } = req.params;
-
+    const { foto_id, referencia_id } = req.params;
     try {
-        const cachedFotoReferencia = await redisClient.get(`foto_referencia:${id}`);
-        
-        if (cachedFotoReferencia) {
-            return res.json({
-                data: JSON.parse(cachedFotoReferencia)
-            });
-        }
-
-        const fotoReferencia = await FotoReferencia.findOne({
-            where: { foto_id: id },  
-            attributes: ['foto_id', 'referencia_id']
+        const fotosreferencias = await FotoReferencia.findOne({
+            where: { foto_id, referencia_id },
+            include: [{ model: Fotos }, { model: Referencias }]
         });
 
-        if (fotoReferencia) {
-            await redisClient.setEx(`foto_referencia:${id}`, 1800, JSON.stringify(fotoReferencia));
-            
-            return res.json({
-                data: fotoReferencia
-            });
-        } else {
-            return res.status(404).json({
-                message: "Relación foto_referencia no encontrada"
-            });
+        if (!fotosreferencias) {
+            return res.status(404).json({ message: "No se encontró la relación foto-referencias" });
         }
 
+        res.json({ data: fotosreferencias });
     } catch (error) {
-        return res.status(500).json({
-            message: "Error interno del servidor"
-        });
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 };
 
-export const getFotoReferenciaByReferenciaId = async (req, res) => {
+export const getReferenciasByFotoId = async (req, res) => {
+    const { foto_id } = req.params;
+    try {
+        const cachedFotosReferencias = await redisClient.get(`foto_referencia_${foto_id}`);
+        if (cachedFotosReferencias) {
+            return res.json({ data: JSON.parse(cachedFotosReferencias) });
+        }
+        
+        const fotosreferencias = await FotoReferencia.findAll({
+            where: { foto_id },
+            include: [{ model: Referencias }]
+        });
+
+        if (fotosreferencias.length === 0) {
+            return res.status(404).json({ message: "No se encontraron referencias para la foto" });
+        }
+
+        await redisClient.setEx(`foto_referencia_${foto_id}`, 1800, JSON.stringify(fotosreferencias));
+        res.json({ data: fotosreferencias });
+    } catch (error) {
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+};
+
+export const getFotosByReferenciaId = async (req, res) => {
     const { referencia_id } = req.params;
-
     try {
-        const cachedFotoReferencia = await redisClient.get(`foto_referencia:referencia:${referencia_id}`);
+        const cachedFotosReferencias = await redisClient.get(`foto_referencia_${referencia_id}`);
+        if (cachedFotosReferencias) {
+            return res.json({ data: JSON.parse(cachedFotosReferencias) });
+        }
         
-        if (cachedFotoReferencia) {
-            return res.json({
-                data: JSON.parse(cachedFotoReferencia)
-            });
-        }
-
-        const fotoReferencia = await FotoReferencia.findAll({
-            where: { referencia_id },  
-            attributes: ['foto_id', 'referencia_id']
+        const fotosreferencias = await FotoReferencia.findAll({
+            where: { referencia_id },
+            include: [{ model: Fotos }]
         });
 
-        if (fotoReferencia.length > 0) {
-            await redisClient.setEx(`foto_referencia:referencia:${referencia_id}`, 1800, JSON.stringify(fotoReferencia));
-            
-            return res.json({
-                data: fotoReferencia
-            });
-        } else {
-            return res.status(404).json({
-                message: "No se encontraron relaciones con la referencia indicada"
-            });
+        if (fotosreferencias.length === 0) {
+            return res.status(404).json({ message: "No se encontraron fotos para la referencia" });
         }
 
+        await redisClient.setEx(`foto_referencia_${referencia_id}`, 1800, JSON.stringify(fotosreferencias));
+        res.json({ data: fotosreferencias });
     } catch (error) {
-        return res.status(500).json({
-            message: "Error interno del servidor"
-        });
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 };
-
-
