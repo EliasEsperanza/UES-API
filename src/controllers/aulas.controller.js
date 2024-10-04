@@ -3,7 +3,6 @@ import { Aulas } from '../models/Aulas.js';
 import { Zonas } from '../models/Zonas.js';
 import { Videos } from '../models/Videos.js';
 
-// Obtener todas las aulas (con caché en Redis)
 export const getAulas = async (req, res) => {
     try {
         const cachedAulas = await redisClient.get('aulas');
@@ -15,7 +14,7 @@ export const getAulas = async (req, res) => {
         }
 
         const aulas = await Aulas.findAll({
-            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos','indicaciones', 'video_id'],
+            attributes: ['id', 'numero', 'zona', 'capacidad', 'fotos', 'indicaciones', 'video_id'],
             include: [
                 {
                     model: Zonas,
@@ -29,18 +28,20 @@ export const getAulas = async (req, res) => {
                 }
             ]
         });
-        
+
         await redisClient.setEx('aulas', 1800, JSON.stringify(aulas));
 
         res.json({
             data: aulas
         });
     } catch (error) {
+        console.error("Error con Redis o la consulta:", error);
         res.status(500).json({
             message: "Error interno del servidor"
         });
     }
 };
+
 
 
 export const createAula = async (req, res) => {
