@@ -22,6 +22,6 @@ export const AulaVideos = sequelize.define('aula_video', {
     }
 },{
     timestamps: false,
-    tableName: 'aula_referencia'
+    tableName: 'aula_video'
 }
 );
