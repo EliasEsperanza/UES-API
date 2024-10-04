@@ -101,14 +101,14 @@ export const getFotosReferenciasOrdenByReferencias = async (req,res) =>{
         });
 
         if (!fotosreferencias || fotosreferencias.length === 0) {
-            console.log("No se encontraron relaciones foto-referencia.");
+            
             return res.status(404).json({ message: "No se encontraron relaciones foto-referencia" });
         }
 
-        console.log("Relaciones foto-referencia encontradas:", fotosreferencias);
+        
         res.json({ data: fotosreferencias });
     } catch (error) {
-        console.error("Error al obtener todas las relaciones de foto-referencia:", error);
+        
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
