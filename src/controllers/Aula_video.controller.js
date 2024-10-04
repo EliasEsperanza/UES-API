@@ -1,4 +1,4 @@
-import { json } from "express";
+//import { json } from "express";
 import redisClient from "../database/redis.js";
 import { AulaVideos } from "../models/Aula_video.js";
 
@@ -25,7 +25,7 @@ export const getAulasVideos = async (req, res) =>{
 export const getAulaVideoById = async (req,res) =>{
     const {aula_id, video_id} = req.params;
     try {
-        const cachedAulasVideos = await redisclient.get(`aula_video:${aula_id}:${video_id}`);
+        const cachedAulasVideos = await redisClient.get(`aula_video:${aula_id}:${video_id}`);
         if (cachedAulasVideos) {
             return res.json({
                 data:JSON.parse(cachedAulasVideos)
@@ -40,7 +40,7 @@ export const getAulaVideoById = async (req,res) =>{
         if(aulavideo){
             await redisclient.setEx(`aula_video:${aula_id}:${video_id}`, 1800, JSON.stringify(aulavideo));
             return res.json({
-                data:aulavideo
+                data: aulavideo
             });
         }
         else{
