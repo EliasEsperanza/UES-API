@@ -29,7 +29,7 @@ export const getAulas = async (req, res) => {
             ]
         });
 
-        await redisClient.setEx('aulas', 1800, JSON.stringify(aulas));
+        await redisClient.setEx('aulas', 86400, JSON.stringify(aulas));
 
         res.json({
             data: aulas
@@ -99,7 +99,7 @@ export const getAulaById = async (req, res) => {
         });
 
         if (aula) {
-            await redisClient.setEx(`aula:${id}`, 1800, JSON.stringify(aula));
+            await redisClient.setEx(`aula:${id}`, 86400, JSON.stringify(aula));
             
             return res.json({
                 data: aula

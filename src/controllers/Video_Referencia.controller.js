@@ -10,7 +10,7 @@ export const getVideosReferencia = async (req, res) =>{
             });
         }
         const videosReferencia = await VideoReferencia.findAll();
-        await redisClient.setEx('video_referencia', 1800, JSON.stringify(videosReferencia));
+        await redisClient.setEx('video_referencia', 86400, JSON.stringify(videosReferencia));
         res.json({
             data: videosReferencia
         });

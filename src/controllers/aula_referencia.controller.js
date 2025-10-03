@@ -12,7 +12,7 @@ export const getAulasReferencias = async (req, res) => {
 
         const aulasReferencia = await AulaReferencia.findAll();
 
-        await redisClient.setEx('aula_referencia', 1800, JSON.stringify(aulasReferencia));
+        await redisClient.setEx('aula_referencia', 86400, JSON.stringify(aulasReferencia));
 
         res.json({
             data: aulasReferencia
@@ -45,7 +45,7 @@ export const getAulaReferenciaById = async (req, res) => {
         });
 
         if (aulaReferencia) {
-            await redisClient.setEx(`aula_referencia:${aula_id}:${referencia_id}`, 1800, JSON.stringify(aulaReferencia));
+            await redisClient.setEx(`aula_referencia:${aula_id}:${referencia_id}`, 86400, JSON.stringify(aulaReferencia));
             return res.json({
                 data: aulaReferencia
             });
@@ -81,7 +81,7 @@ export const getReferenciasByAulaId = async (req, res) => {
         });
 
         if (referencias.length > 0) {
-            await redisClient.setEx(`aula_referencias:${aula_id}`, 1800, JSON.stringify(referencias));
+            await redisClient.setEx(`aula_referencias:${aula_id}`, 86400, JSON.stringify(referencias));
             return res.json({
                 data: referencias
             });

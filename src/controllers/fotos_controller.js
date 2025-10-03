@@ -15,7 +15,7 @@ export const getFotos = async (req, res) => {
             attributes: ['id', 'nombre', 'url_foto']
         });
         
-        await redisClient.setEx('fotos', 1800, JSON.stringify(fotos));
+        await redisClient.setEx('fotos', 86400, JSON.stringify(fotos));
 
         res.json({
             data: fotos
@@ -45,7 +45,7 @@ export const getFotosById = async (req, res) => {
         });
 
         if (foto) {
-            await redisClient.setEx(`fotos:${id}`, 1800, JSON.stringify(foto));
+            await redisClient.setEx(`fotos:${id}`, 86400, JSON.stringify(foto));
             
             return res.json({
                 data: foto

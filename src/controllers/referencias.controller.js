@@ -19,7 +19,7 @@ export const getReferencias = async (req, res) => {
         const referencias = await Referencias.findAll();
         
         try {
-            await redisClient.setEx('referencias', 1800, JSON.stringify(referencias));
+            await redisClient.setEx('referencias', 86400, JSON.stringify(referencias));
         } catch (redisError) {
             console.error("Error al almacenar datos en Redis", redisError);
         }
@@ -80,7 +80,7 @@ export const getReferenciaById = async (req, res) => {
         });
 
         if (referencia) {
-            await redisClient.setEx(`referencia:${id}`, 1800, JSON.stringify(referencia));
+            await redisClient.setEx(`referencia:${id}`, 86400, JSON.stringify(referencia));
             
             return res.json({
                 data: referencia

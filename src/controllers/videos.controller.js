@@ -15,7 +15,7 @@ export const getVideos = async (req, res) => {
             attributes: ['id', 'url', 'nombre']
         });
         
-        await redisClient.setEx('videos', 1800, JSON.stringify(videos));
+        await redisClient.setEx('videos', 86400, JSON.stringify(videos));
 
         res.json({
             data: videos
@@ -45,7 +45,7 @@ export const getVideoById = async (req, res) => {
         });
 
         if (video) {
-            await redisClient.setEx(`video:${id}`, 1800, JSON.stringify(video));
+            await redisClient.setEx(`video:${id}`, 86400, JSON.stringify(video));
             
             return res.json({
                 data: video

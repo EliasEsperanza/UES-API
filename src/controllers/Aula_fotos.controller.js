@@ -20,7 +20,7 @@ export const getFotosAulas = async (req, res) => {
         });
         
         console.log("Datos obtenidos de la base de datos, guardando en Redis...");
-        await redisClient.setEx('aula_fotos', 1800, JSON.stringify(fotosaulas));
+        await redisClient.setEx('aula_fotos', 86400, JSON.stringify(fotosaulas));
         res.json({ data: fotosaulas });
     } catch (error) {
         console.error("Error al obtener las relaciones de aula-foto:", error);
@@ -64,7 +64,7 @@ export const getFotosByAulaId = async (req, res) => {
             return res.status(404).json({ message: "No se encontraron fotos para el aula" });
         }
 
-        await redisClient.setEx(`aula_fotos_${aula_id}`, 1800, JSON.stringify(fotosaulas));
+        await redisClient.setEx(`aula_fotos_${aula_id}`, 86400, JSON.stringify(fotosaulas));
         res.json({ data: fotosaulas });
     } catch (error) {
         res.status(500).json({ message: "Error interno del servidor" });
@@ -89,7 +89,7 @@ export const getFotosOrdenByAulaId = async (req,res) =>{
         });
         
         
-        await redisClient.setEx('fotosOrdenByAula', 1800, JSON.stringify(fotosaulas));
+        await redisClient.setEx('fotosOrdenByAula', 86400, JSON.stringify(fotosaulas));
         res.json({ 
             data: fotosaulas 
         });
@@ -117,7 +117,7 @@ export const getFotosByAulaIdOrdenAsc = async (req, res) => {
             return res.status(404).json({ message: "No se encontraron fotos para el aula" });
         }
 
-        await redisClient.setEx(`aula_fotos_${aula_id}`, 1800, JSON.stringify(fotosaulas));
+        await redisClient.setEx(`aula_fotos_${aula_id}`, 86400, JSON.stringify(fotosaulas));
         res.json({ data: fotosaulas });
     } catch (error) {
         res.status(500).json({ message: "Error interno del servidor" });

@@ -14,7 +14,7 @@ export const get_Aulas_Zonas= async(req,res)=>{
         }
         const aulas_zonas_Referencia = await AulaZona.findAll();
 
-        await redisClient.setEx('aula_zona', 1800, JSON.stringify(aulas_zonas_Referencia));
+        await redisClient.setEx('aula_zona', 86400, JSON.stringify(aulas_zonas_Referencia));
 
         res.json({
             data: aulas_zonas_Referencia
@@ -48,7 +48,7 @@ export const get_Aula_Zonas_ById = async (req, res) => {
         });
 
         if (aulaZona) {
-            await redisClient.setEx(`aula_zona:${aula_id}:${zona_id}`, 1800, JSON.stringify(aulaZona));
+            await redisClient.setEx(`aula_zona:${aula_id}:${zona_id}`, 86400, JSON.stringify(aulaZona));
             
             return res.json({
                 data: aulaZona

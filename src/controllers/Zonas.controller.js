@@ -11,7 +11,7 @@ export const getZonas = async (req, res)=>{
         }
         const zonas = await Zonas.findAll();
         
-        await redisClient.setEx('zonas', 1800, JSON.stringify(zonas));
+        await redisClient.setEx('zonas', 86400, JSON.stringify(zonas));
 
         res.json({
             data:zonas
@@ -58,7 +58,7 @@ export const getZonaById = async (req, res) => {
         });
         
         if (zona) {
-            await redisClient.setEx(`zonas:${id}`, 1800, JSON.stringify(zona));
+            await redisClient.setEx(`zonas:${id}`, 86400, JSON.stringify(zona));
             return res.json({
                 data: zona
             });

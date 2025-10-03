@@ -10,7 +10,7 @@ export const getAulasVideos = async (req, res) =>{
             });
         }
         const aulasvideos = await AulaVideos.findAll();
-        await redisClient.setEx('aula_video', 1800, JSON.stringify(aulasvideos));
+        await redisClient.setEx('aula_video', 86400, JSON.stringify(aulasvideos));
         res.json({
             data: aulasvideos
         });
@@ -65,7 +65,7 @@ export const getVideoByAulaId = async (req, res) => {
             });
         }
 
-        await redisClient.setEx(`aula_video_${aula_id}`, 1800, JSON.stringify(aulaVideos));
+        await redisClient.setEx(`aula_video_${aula_id}`, 86400, JSON.stringify(aulaVideos));
 
         res.json({
             data: aulaVideos
